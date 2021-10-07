@@ -25,7 +25,7 @@
                  v-for="(day,i) in days"
                  v-text="day.text"
                  :key="i"
-                 :class="{ active: day.active }"
+                 :class="{ active: day.active, fade: day.fade }"
                  @click="selectDay(day)"
             />
         </div>
@@ -36,6 +36,8 @@
 
 <script>
 const DEFAULT_LANG = 'ru';
+const WEEK_FIRST_DAY = 0;
+const WEEK_LAST_DAY = 6;
 
 export default {
     name: "CalendarPicker",
@@ -166,8 +168,49 @@ export default {
                         text: i,
                         date: listDate,
                         active: this.date && this.date.getDate() === i,
+                        fade: false,
                     }
                 );
+            }
+
+            const firstDay = days[0] || null;
+            if (firstDay && firstDay.date && firstDay.date instanceof Date) {
+                // Добираем дни предыдущего месяца
+                const prevMonthShownCount = firstDay.date.getDay();
+                if (prevMonthShownCount > WEEK_FIRST_DAY) {
+                    const prevMonthTotalCount = new Date(this.year, this.monthNumber, 0).getDate();
+                    for (let i = 0; i < prevMonthShownCount; i++) {
+                        const dayNumber = prevMonthTotalCount - i;
+                        const listDate = new Date(this.year, this.monthNumber - 1, dayNumber);
+                        days.unshift(
+                            {
+                                text: dayNumber,
+                                date: listDate,
+                                fade: true,
+                                active: false,
+                            }
+                        );
+                    }
+                }
+            }
+
+            const lastDay = days && days.length ? days[days.length - 1] : null;
+            if (lastDay && lastDay.date && lastDay.date instanceof Date) {
+                // Добираем дни следующего месяца
+                const nextMonthShownCount = WEEK_LAST_DAY - lastDay.date.getDay();
+                if (nextMonthShownCount > 0) {
+                    for (let i = 1; i <= nextMonthShownCount; i++) {
+                        const listDate = new Date(this.year, this.monthNumber + 1, i);
+                        days.push(
+                            {
+                                text: i,
+                                date: listDate,
+                                fade: true,
+                                active: false,
+                            }
+                        );
+                    }
+                }
             }
 
             return days;
@@ -271,6 +314,10 @@ export default {
     color: blue;
     font-weight: bold;
     position: relative;
+}
+
+.calendar__day.fade {
+    opacity: .5;
 }
 
 .calendar__day.active:before {
