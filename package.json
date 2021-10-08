@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
+    "build": "git checkout dist ; git merge master ; vue-cli-service build && rm -r docs/ ; cp -r dist/ docs/ ; git add -A ; git commit -m 'updated dist' ; git push origin dist ; git checkout master",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
