@@ -2,6 +2,8 @@
 
 [Описание задания](https://n1creator.com/whtestjs.html).
 
+[Демонстрация результата](https://geff21st.github.io/n1creator.whtestjs/).
+
 ## Компонент <CalendarPicker>
 
 Подключение компонента:
